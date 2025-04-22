@@ -16,8 +16,7 @@ class Events:
     @dataclasses.dataclass(frozen=True)
     class NewLocalPrices:
         """
-        Some local system emitted calculated local price, like a HEMS communicating over
-        OpenADR to local devices.
+        Some local system emitted calculated local price, like the smart meter emitting these over OpenADR or Matter.
         """
         occurred_at: datetime.datetime
         prices: HourlyTimeseries[EurPwrKWh]
