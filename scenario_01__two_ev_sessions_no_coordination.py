@@ -1,8 +1,7 @@
 from __future__ import annotations
 import dataclasses
-import typing as t
 import datetime
-from util import Amps, Volts, KW, KWh, EurPwrKWh, VOLTAGE, HourlyTimeseries, HOUR
+from util import Amps, KWh, EurPwrKWh, VOLTAGE, HourlyTimeseries
 
 
 # Key times in our simulation, a simpler time
@@ -12,7 +11,7 @@ H0200 = datetime.datetime.fromisoformat('2000-01-01T02:00:00Z')
 H0300 = datetime.datetime.fromisoformat('2000-01-01T03:00:00Z')
 
 class Events:
-    # Things that can happen in our simulation
+    # Things that can happen in this scenario
 
     @dataclasses.dataclass(frozen=True)
     class NewLocalPrices:
@@ -54,6 +53,9 @@ class Events:
 
 @dataclasses.dataclass
 class EVSE:
+    # Stateful model of an EVSE; this is highly simplified, for instance it only
+    # schedules once when the EV plugs in
+
     device_id: str
     max_current: Amps
 
@@ -96,7 +98,6 @@ class EVSE:
 @dataclasses.dataclass
 class World:
     """ Our overall simulated universe - in this case, just a home with EVSEs. """
-    main_breaker: Amps
     evses: list[EVSE]
 
     def step(self, event: Events.Any):
@@ -113,12 +114,12 @@ class World:
                 evse.step(event)
 
 
+# This is our simulated scenario; we set up a world and play some events through it
 def main():
     main_breaker = Amps(30)
     evse_roger = EVSE(device_id="roger", max_current=Amps(20))
     evse_danny = EVSE(device_id="danny", max_current=Amps(20))
     world = World(
-        main_breaker=main_breaker,
         evses=[
             # Two EVSEs at the home, together capable of exceeding the panel max
             evse_roger,
@@ -180,6 +181,7 @@ def main():
     for t in [H0000, H0100, H0200, H0300]:
         total_amps = Amps(sum(evse.current_schedule.at(t) for evse in world.evses))
         assert total_amps <= main_breaker, f"schedules exceed main breaker at {t}, total amps drawn is {total_amps}"
+
 
 if __name__ == "__main__":
     main()
