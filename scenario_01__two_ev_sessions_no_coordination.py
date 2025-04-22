@@ -73,6 +73,8 @@ class EVSE:
             case Events.NewLocalPrices(): self.prices = event.prices
             case Events.NewCapacityLimit(): self.import_limits = event.import_limits
             case Events.EVConnected():
+                # An EV connected to us! Let's schedule it.
+
                 # Hourly slots we *could* use, with the price and capacity limit of each
                 options: list[tuple[datetime.datetime, EurPwrKWh, Amps]] = [
                     # Each option has a max current either limited by the EVSE, or by the main breaker; in practice
@@ -101,7 +103,7 @@ class World:
     evses: list[EVSE]
 
     def step(self, event: Events.Any):
-        """ Run one step of the simulation - some event occurred. """
+        """ Run one step of the simulation, processing some event that occurred. """
         match event:
             case Events.NewLocalPrices() | Events.NewCapacityLimit():
                 # Fan-out to all evses

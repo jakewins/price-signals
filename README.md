@@ -14,6 +14,8 @@ For instance, to run the first scenario:
 
 ## Scenarios
 
+To read the scenario, it may help to start in the main() function towards the bottom of it.
+
 ### 01: Two EV sessions, no coordination
 
 This scenario has two identical EV sessions start at hour 0 in the home.
@@ -24,10 +26,29 @@ As it stands, this scenario fails, because the devices see the same prices and c
 
 If I understand the proposal from Bruce, this scenario would be solved in one of two ways:
 
-- The EVSEs negotiate capacity, such that each device get allocated individual capacity OR;
-- Some scheduler sees that is happening and changes the local prices to make the devices "move around" to fit
+- A: The EVSEs request capacity, such that each device get allocated individual capacity OR;
+- B: Scheduling is done in some central place (eg. a HEMS or similar system)
 
-To read the scenario, it may help to start in the main() function towards the bottom of it.
+If (B) is chosen, then the scheduler must *control* and *model* the EVSEs. 
+In other words, the central scheduled needs to know things like state-of-charge, target state-of-charge, departure time.
 
+If the scheduler must know the internals of the DER, then I would argue the price signal ought to terminate at the central scheduler.
+The scheduler at this point needs a protocol to talk to the EVSE that communicates things like max current, departure times, states of charge and kWh's charged.
+If a domain-specific protocol is needed already, it makes little sense - to me - to then turn around and use prices for control. 
+The scheduler already talks to the DER in it's domain-specific language, and has calculated an energy schedule the DER should follow; it should just send that schedule.
 
+The interesting question instead then becomes case (A) above - can a system be constructed that either removes central scheduling or makes it agnostic of device type?
+And, if we can, are the capabilities of such a scheduling regime such that the home owner gets the same value out of their assets as they would in a centrally scheduled setup?
+
+### 02: Same as 01, but with negotiated capacites
+
+This scenario is not implemented yet.
+
+This then becomes the first interesting scenario for me to understand. 
+How would we extend scenario 01 to not surpass the main breaker, without introducing a central scheduler?
+
+### Other scenarios / things I'd like to explore
+
+- Two EVs, where the first arriving EV needs to "move" its schedule to make space for the second one
+- Two EVs with happy schedules, and then a desire from an aggregator to move some kWhs of energy from H00 to, say, H02
 
