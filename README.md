@@ -45,7 +45,7 @@ And, if we can, are the capabilities of such a scheduling regime such that the h
 This scenario is not implemented yet.
 
 This then becomes the first interesting scenario for me to understand. 
-How would we extend scenario 01 to not surpass the main breaker, without introducing a central scheduler?
+How would we extend scenario 01 to not surpass the main breaker, without introducing a central scheduler that knows the "innards" of the DERs it controls?
 
 ### Other scenarios / things I'd like to explore
 
